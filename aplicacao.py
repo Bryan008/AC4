@@ -5,7 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 app = Flask(__name__)
 
 
-app.config['SQLAlchemy_DATABASE_URI']='mysql+pymysql://root:1425@localhost/Cadastro'
+app.config['SQLALCHEMY_DATABASE_URI']='mysql+pymysql://root:1425@localhost/Cadastro'
 db = SQLAlchemy(app)
 
 
