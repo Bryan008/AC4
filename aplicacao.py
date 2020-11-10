@@ -5,21 +5,24 @@ from flask_sqlalchemy import SQLAlchemy
 app = Flask(__name__)
 
 
-app.config['SQLALCHEMY_DATABASE_URI']='mysql+pymysql://root:1425@localhost/Cadastro'
+app.config['SQLALCHEMY_DATABASE_URI']='mysql+pymysql://Bryan:0210@localhost/cadastro'
 db = SQLAlchemy(app)
 
 
 class cadastro(db.Model):
-    __tablename__= "cadastrar"
-    _id = db.Column(db.Interger, primary_key=True, autoincrement=True)
-    time = db.Column(db.String(12))
+    __tablename__="cadastrar"
+    _id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    time = db.Column(db.String(20))
+    membro = db.Column(db.String(20))
     
-    def __init__(self,time):
+    def __init__(self,time,membro):
         self.time = time
+        self.membro = membro
     
 
 db.create_all()
 
+@app.route("/")
 @app.route("/home")
 def index():
     return render_template("Escopo.html")
@@ -59,17 +62,28 @@ def Escopo():
 @app.route("/mensagem")
 def mensagem():
     return render_template("mensagem.html")
-
-@app.route("/Cadastro", methods=['GET', 'POST'])
+    
+@app.route("/Cadastro")
 def Cadastro():
-    if request.method == "POST":
+    return render_template("cadastrar.html")
+
+@app.route("/cadastrar",methods=['GET', 'POST'])
+def cadastrar():
+    if request.method =="POST":
         time = (request.form.get("time"))
+        membro = (request.form.get("membro"))
         if time:
-            f = cadastro(time)
+            f = cadastro(time,membro)
             db.session.add(f)
             db.session.commit()
-    return redirect(url_for("mensagem"))
-   
+    return redirect(url_for("listar"))
+
+@app.route("/listar")
+def listar():
+    cadastros = cadastro.query.all()
+    return render_template("listar.html", cadastro=cadastros)
+
+
 if __name__ == "__main__":
     app.run(debug=True)
 
